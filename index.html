@@ -548,25 +548,40 @@ function renderFretboard(chordName) {
 
   const voicing = CHORD_VOICINGS[chordName];
   if (!voicing) {
-    // show placeholder
     const t = createSvgEl('text', {
       x: '140', y: '170', fill: '#5a6580',
       'font-size': '14', 'text-anchor': 'middle', 'font-family': 'inherit'
     });
-    t.textContent = 'No voicing data';
+    t.textContent = 'Select a chord';
     svg.appendChild(t);
     return;
   }
 
   const { strings, fingers, startFret, barres } = voicing;
-  const numFrets = 5;
+
+  // Auto-calculate fret window from actual fret values
+  const frettedValues = strings.filter(f => f > 0);
+  const minFret = frettedValues.length > 0 ? Math.min(...frettedValues) : 1;
+  const maxFret = frettedValues.length > 0 ? Math.max(...frettedValues) : 5;
+  const span = maxFret - minFret;
+  // Show at least 4 frets, expand to fit all notes
+  const numFrets = Math.max(4, span + 2);
+  // Window starts 1 fret before the lowest fretted note (but min 1)
+  const windowStart = Math.max(1, minFret - 1);
+  const windowEnd = windowStart + numFrets;
+  const hasOpenStrings = strings.some(f => f === 0);
+  const showNut = windowStart <= 1;
+
   const leftPad = 50;
   const topPad = 50;
   const stringSpacing = 36;
-  const fretSpacing = 52;
+  const fretSpacing = Math.min(52, 260 / numFrets); // shrink if many frets
   const totalW = stringSpacing * 5;
   const totalH = fretSpacing * numFrets;
-  const dotRadius = 13;
+  const dotRadius = Math.min(13, fretSpacing * 0.4);
+
+  // Update SVG viewBox to fit
+  svg.setAttribute('viewBox', `0 0 280 ${topPad + totalH + 35}`);
 
   // Fretboard background
   const bgRect = createSvgEl('rect', {
@@ -576,40 +591,44 @@ function renderFretboard(chordName) {
   });
   svg.appendChild(bgRect);
 
-  // Rosewood grain (subtle)
-  for (let i = 0; i < 8; i++) {
+  // Rosewood grain (subtle, deterministic)
+  const grainPositions = [0.1, 0.25, 0.4, 0.55, 0.65, 0.78, 0.88, 0.95];
+  for (const pos of grainPositions) {
     const line = createSvgEl('line', {
-      x1: leftPad + Math.random() * totalW,
+      x1: leftPad + pos * totalW,
       y1: topPad,
-      x2: leftPad + Math.random() * totalW,
+      x2: leftPad + (pos + 0.02) * totalW,
       y2: topPad + totalH,
       stroke: 'rgba(90,60,30,0.3)', 'stroke-width': '1'
     });
     svg.appendChild(line);
   }
 
-  // Nut or fret position label
-  if (startFret <= 1) {
+  // Nut (if window starts at fret 1)
+  if (showNut) {
     const nut = createSvgEl('rect', {
       x: leftPad - 4, y: topPad - 5,
       width: totalW + 8, height: 7,
       rx: 2, fill: '#f5f0e0'
     });
     svg.appendChild(nut);
-  } else {
+  }
+
+  // Fret position label
+  if (!showNut) {
     const label = createSvgEl('text', {
       x: leftPad - 16, y: topPad + fretSpacing / 2 + 5,
       fill: '#8b95b0', 'font-size': '13', 'text-anchor': 'middle',
       'font-weight': '600', 'font-family': 'inherit'
     });
-    label.textContent = startFret + 'fr';
+    label.textContent = windowStart + 'fr';
     svg.appendChild(label);
   }
 
   // Fret wires
   for (let f = 0; f <= numFrets; f++) {
     const y = topPad + f * fretSpacing;
-    const fw = f === 0 ? 2 : 1.5;
+    const fw = (f === 0 && showNut) ? 2 : 1.5;
     const line = createSvgEl('line', {
       x1: leftPad, y1: y, x2: leftPad + totalW, y2: y,
       stroke: '#a89878', 'stroke-width': fw
@@ -617,10 +636,23 @@ function renderFretboard(chordName) {
     svg.appendChild(line);
   }
 
+  // Fret numbers along right side
+  for (let f = 1; f <= numFrets; f++) {
+    const absFret = windowStart + f - 1;
+    const y = topPad + (f - 0.5) * fretSpacing;
+    const label = createSvgEl('text', {
+      x: leftPad + totalW + 18, y: y + 4,
+      fill: '#5a6580', 'font-size': '10', 'text-anchor': 'middle',
+      'font-family': 'inherit'
+    });
+    label.textContent = absFret;
+    svg.appendChild(label);
+  }
+
   // Strings
   for (let s = 0; s < 6; s++) {
     const x = leftPad + s * stringSpacing;
-    const sw = 1.2 + (5 - s) * 0.25; // thicker bass strings
+    const sw = 1.2 + (5 - s) * 0.25;
     const line = createSvgEl('line', {
       x1: x, y1: topPad, x2: x, y2: topPad + totalH,
       stroke: '#c0b090', 'stroke-width': sw
@@ -628,14 +660,13 @@ function renderFretboard(chordName) {
     svg.appendChild(line);
   }
 
-  // Fret dots (inlays) at frets 3, 5 relative to startFret
-  const inlayFrets = [3, 5, 7, 9, 12, 15];
+  // Fret inlay dots
+  const inlayFrets = [3, 5, 7, 9, 12, 15, 17, 19];
   for (const absFret of inlayFrets) {
-    const relFret = absFret - (startFret <= 1 ? 0 : startFret - 1);
+    const relFret = absFret - windowStart + 1;
     if (relFret >= 1 && relFret <= numFrets) {
       const cy = topPad + (relFret - 0.5) * fretSpacing;
       if (absFret === 12) {
-        // double dot
         for (const offset of [-stringSpacing, stringSpacing]) {
           const dot = createSvgEl('circle', {
             cx: leftPad + 2.5 * stringSpacing + offset, cy,
@@ -655,11 +686,11 @@ function renderFretboard(chordName) {
 
   // Barres
   for (const barre of barres) {
-    const fromIdx = 6 - barre.fromString; // highE=1 → index 5
-    const toIdx = 6 - barre.toString;     // lowE=6 → index 0
+    const fromIdx = 6 - barre.fromString;
+    const toIdx = 6 - barre.toString;
     const minIdx = Math.min(fromIdx, toIdx);
     const maxIdx = Math.max(fromIdx, toIdx);
-    const fretRel = barre.fret - (startFret <= 1 ? 0 : startFret - 1);
+    const fretRel = barre.fret - windowStart + 1;
     if (fretRel >= 1 && fretRel <= numFrets) {
       const cy = topPad + (fretRel - 0.5) * fretSpacing;
       const x1 = leftPad + minIdx * stringSpacing;
@@ -688,7 +719,6 @@ function renderFretboard(chordName) {
     const x = leftPad + s * stringSpacing;
 
     if (fretVal === -1) {
-      // Muted string — X above
       const txt = createSvgEl('text', {
         x, y: topPad - 16,
         fill: 'var(--text-muted)', 'font-size': '14',
@@ -697,38 +727,33 @@ function renderFretboard(chordName) {
       txt.textContent = '\u00D7';
       svg.appendChild(txt);
     } else if (fretVal === 0) {
-      // Open string — O above
       const circ = createSvgEl('circle', {
         cx: x, cy: topPad - 18,
         r: 7, fill: 'none', stroke: 'var(--text-secondary)', 'stroke-width': '1.5'
       });
       svg.appendChild(circ);
     } else {
-      // Fretted note — dot on fretboard
-      const fretRel = fretVal - (startFret <= 1 ? 0 : startFret - 1);
+      const fretRel = fretVal - windowStart + 1;
       if (fretRel >= 1 && fretRel <= numFrets) {
         const cy = topPad + (fretRel - 0.5) * fretSpacing;
         const color = fingerColors[finger] || fingerColors[0];
 
-        // shadow
         const shadow = createSvgEl('circle', {
           cx: x, cy: cy + 2, r: dotRadius,
           fill: 'rgba(0,0,0,0.3)'
         });
         svg.appendChild(shadow);
 
-        // dot
         const dot = createSvgEl('circle', {
           cx: x, cy, r: dotRadius,
           fill: color, class: 'finger-dot'
         });
         svg.appendChild(dot);
 
-        // finger number
         if (finger > 0) {
           const txt = createSvgEl('text', {
             x, y: cy + 5,
-            fill: '#fff', 'font-size': '12',
+            fill: '#fff', 'font-size': '11',
             'text-anchor': 'middle', 'font-weight': '700',
             'font-family': 'inherit'
           });
