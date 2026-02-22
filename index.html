@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guitar Chord Viewer — AW Guitar</title>
+<title>Guitar Chord Viewer</title>
 <style>
 /* ============================================================
    CSS RESET & BASE
@@ -398,6 +398,49 @@ body {
 }
 
 /* ============================================================
+   SONG SELECTOR
+   ============================================================ */
+.song-selector {
+  position: relative;
+}
+.song-selector select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 28px 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  max-width: 220px;
+  transition: border-color 0.15s;
+}
+.song-selector select:hover {
+  border-color: var(--accent-blue);
+}
+.song-selector select:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+}
+.song-selector::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-secondary);
+  pointer-events: none;
+}
+
+/* ============================================================
    MOBILE — Responsive
    ============================================================ */
 .mobile-tabs {
@@ -466,13 +509,14 @@ body {
 <!-- HEADER -->
 <header class="header">
   <div class="header-left">
-    <h1>Jazz Guitar Chord Viewer</h1>
-    <div class="subtitle">
-      Arrangement by <a href="https://youtu.be/kZ7MBgaso78" target="_blank" rel="noopener">AW Guitar</a>
-    </div>
+    <h1 id="songTitle">Guitar Chord Viewer</h1>
+    <div class="subtitle" id="songSubtitle"></div>
   </div>
   <div class="header-right">
-    <span class="capo-badge">Capo</span>
+    <div class="song-selector">
+      <select id="songSelect"></select>
+    </div>
+    <span class="capo-badge" id="capoBadge" style="display:none">Capo</span>
     <div class="nav-help">
       <kbd>&larr;</kbd> <kbd>&rarr;</kbd> prev / next chord
     </div>
@@ -519,7 +563,8 @@ body {
   <div class="panel-right" id="panelRight"></div>
 </div>
 
-<script src="chord_data.js"></script>
+<script src="songs/registry.js"></script>
+<script src="songs/aw_guitar_jazz/data.js"></script>
 <script>
 // =============================================================================
 // APP STATE
@@ -528,8 +573,15 @@ const state = {
   activeChord: null,
   activeSection: null,
   allChordButtons: [],  // flat list for keyboard nav
-  currentChordIndex: -1
+  currentChordIndex: -1,
+  currentSongId: null
 };
+
+// Current song data (set by loadSong)
+let currentVoicings = {};
+let currentSongData = {};
+let currentLibrary = {};
+let currentTabData = '';
 
 // =============================================================================
 // SVG FRETBOARD RENDERER
@@ -546,7 +598,7 @@ function renderFretboard(chordName) {
   const svg = document.getElementById('fretboard-svg');
   svg.innerHTML = '';
 
-  const voicing = CHORD_VOICINGS[chordName];
+  const voicing = currentVoicings[chordName];
   if (!voicing) {
     const t = createSvgEl('text', {
       x: '140', y: '170', fill: '#5a6580',
@@ -797,7 +849,7 @@ function buildSongStructure() {
   const panel = document.getElementById('panelLeft');
   panel.innerHTML = '<div class="panel-title">Song Structure</div>';
 
-  SONG_DATA.sections.forEach((section, sIdx) => {
+  currentSongData.sections.forEach((section, sIdx) => {
     const block = document.createElement('div');
     block.className = 'section-block';
 
@@ -870,7 +922,7 @@ function buildChordLibrary() {
   const panel = document.getElementById('panelRight');
   panel.innerHTML = '';
 
-  for (const [groupName, chords] of Object.entries(CHORD_LIBRARY)) {
+  for (const [groupName, chords] of Object.entries(currentLibrary)) {
     const group = document.createElement('div');
     group.className = 'library-group';
 
@@ -933,7 +985,7 @@ function selectChord(chordName, btn, section) {
   const tabViewer = document.getElementById('tabViewer');
   if (section && section.type === 'tab') {
     tabViewer.classList.add('show');
-    document.getElementById('tabContent').textContent = TAB_DATA;
+    document.getElementById('tabContent').textContent = currentTabData;
   } else {
     tabViewer.classList.remove('show');
   }
@@ -951,7 +1003,7 @@ function selectChordFromLibrary(chordName) {
   displayEl.childNodes[0].textContent = chordName + ' ';
 
   // Find which key group
-  const voicing = CHORD_VOICINGS[chordName];
+  const voicing = currentVoicings[chordName];
   if (voicing) {
     const catMap = { key_of_A: 'A', key_of_B: 'B', key_of_C_G: 'C/G' };
     keyLabel.textContent = 'Key of ' + (catMap[voicing.category] || '');
@@ -994,7 +1046,7 @@ function setActiveSection(section) {
   const tabViewer = document.getElementById('tabViewer');
   if (section.type === 'tab') {
     tabViewer.classList.add('show');
-    document.getElementById('tabContent').textContent = TAB_DATA;
+    document.getElementById('tabContent').textContent = currentTabData;
   } else {
     tabViewer.classList.remove('show');
   }
@@ -1004,7 +1056,7 @@ function setActiveSection(section) {
 // KEYBOARD NAVIGATION
 // =============================================================================
 document.addEventListener('keydown', (e) => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
 
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
     e.preventDefault();
@@ -1025,7 +1077,7 @@ function navigateChord(direction) {
   const btn = state.allChordButtons[newIndex];
   const chord = btn.dataset.chord;
   const sectionIdx = parseInt(btn.dataset.section);
-  const section = SONG_DATA.sections[sectionIdx];
+  const section = currentSongData.sections[sectionIdx];
 
   // Expand section if needed
   const sectionContent = btn.closest('.section-content');
@@ -1055,22 +1107,81 @@ document.querySelectorAll('.mobile-tabs button').forEach(btn => {
 });
 
 // =============================================================================
-// INIT
+// SONG LOADING
 // =============================================================================
-function init() {
+function buildSongSelector() {
+  const select = document.getElementById('songSelect');
+  select.innerHTML = '';
+  SONG_REGISTRY.forEach(song => {
+    const opt = document.createElement('option');
+    opt.value = song.id;
+    opt.textContent = song.artist + ' — ' + song.title;
+    select.appendChild(opt);
+  });
+  select.addEventListener('change', () => loadSong(select.value));
+}
+
+function loadSong(songId) {
+  const songEntry = SONG_REGISTRY.find(s => s.id === songId);
+  const data = SONG_STORE[songId];
+  if (!songEntry || !data) return;
+
+  // Set current song data
+  state.currentSongId = songId;
+  currentVoicings = data.voicings;
+  currentSongData = data.songData;
+  currentLibrary = data.library;
+  currentTabData = data.tabData;
+
+  // Reset navigation state
+  state.activeChord = null;
+  state.allChordButtons = [];
+  state.currentChordIndex = -1;
+
+  // Update header
+  document.getElementById('songTitle').textContent = currentSongData.title || 'Guitar Chord Viewer';
+  const subtitle = document.getElementById('songSubtitle');
+  if (currentSongData.source) {
+    subtitle.innerHTML = 'Arrangement by <a href="' + currentSongData.source + '" target="_blank" rel="noopener">' + (currentSongData.artist || '') + '</a>';
+  } else {
+    subtitle.textContent = currentSongData.artist || '';
+  }
+
+  // Show/hide capo badge
+  const capoBadge = document.getElementById('capoBadge');
+  if (currentSongData.capo) {
+    capoBadge.textContent = currentSongData.capo;
+    capoBadge.style.display = '';
+  } else {
+    capoBadge.style.display = 'none';
+  }
+
+  // Update song selector
+  document.getElementById('songSelect').value = songId;
+
+  // Rebuild UI
   buildSongStructure();
   buildChordLibrary();
-
-  // Render empty fretboard
   renderFretboard(null);
 
-  // Auto-expand first section with chords (Verse 1)
-  const firstSection = document.querySelector('.section-block:nth-child(3)'); // skip title + intro
-  if (firstSection) {
-    const header = firstSection.querySelector('.section-header');
-    const content = firstSection.querySelector('.section-content');
-    header?.classList.add('expanded');
-    content?.classList.add('show');
+  // Hide TAB viewer
+  document.getElementById('tabViewer').classList.remove('show');
+
+  // Reset chord display
+  const displayEl = document.getElementById('chordDisplayName');
+  displayEl.childNodes[0].textContent = 'Select a chord ';
+  document.getElementById('keyLabel').textContent = '';
+
+  // Auto-expand first section with chords
+  const sections = document.querySelectorAll('.section-block');
+  for (const block of sections) {
+    const content = block.querySelector('.section-content');
+    if (content && content.querySelector('.chord-btn')) {
+      const header = block.querySelector('.section-header');
+      header?.classList.add('expanded');
+      content?.classList.add('show');
+      break;
+    }
   }
 
   // Select first chord
@@ -1078,7 +1189,19 @@ function init() {
     const firstBtn = state.allChordButtons[0];
     const chord = firstBtn.dataset.chord;
     const sIdx = parseInt(firstBtn.dataset.section);
-    selectChord(chord, firstBtn, SONG_DATA.sections[sIdx]);
+    selectChord(chord, firstBtn, currentSongData.sections[sIdx]);
+  }
+}
+
+// =============================================================================
+// INIT
+// =============================================================================
+function init() {
+  buildSongSelector();
+
+  // Load first song from registry
+  if (SONG_REGISTRY.length > 0) {
+    loadSong(SONG_REGISTRY[0].id);
   }
 }
 
