@@ -1,0 +1,5 @@
+video.mp4
+frames_sample/
+__pycache__/
+*.pyc
+.DS_Store

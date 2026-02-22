@@ -1,0 +1,232 @@
+======================================================================
+  CHORD PROGRESSION — Extracted from YouTube video
+  Source: https://youtu.be/kZ7MBgaso78
+  Channel: AW Guitar
+  Capo: Yes (visible on guitar neck)
+======================================================================
+
+Note: Chord names are as displayed in the video.
+      "Current chord" = the large label shown bottom-right.
+      "Line" = full chord sequence in the sheet music staff.
+
+======================================================================
+  INTRO (TAB section)  0:00 - 1:05
+======================================================================
+
+[0:00]  (TAB only, no chord names shown)
+        TAB pattern repeating — fingerpicking intro
+        Line: TAB numbers visible (no chord labels in this section)
+
+[0:10]  AM7
+        Line: AM7 ... E/G#
+        (Chord diagram appears, notation switches from TAB to rhythm)
+
+[0:50]  F#m7
+        Line: AM7 | E/G# | F#m7 | EM7
+
+======================================================================
+  SECTION A — Verse 1  (~1:05 - 1:45)
+======================================================================
+
+[1:09]  Aadd9/B
+        Line: AM7 | E/G# | F#m7 | A/B | Bm7 | D/E | Bb7(#11)
+
+[1:11]  Bm7
+        Line: AM7 | E/G# | F#m7 | A/B | Bm7 | D/E | Bb7(#11)
+
+[1:13]  AM7
+        Line: AM7 | E/G# | E/G# | C#m7 | F#m7 | F#m7 | B(?) | ...
+
+[1:19]  F#m7
+        Line: AM7 | E/G# | C#m7 | F#m7 | E/G# | A/B
+
+[1:26]  Bm/D
+        Line: EM7 | B/D# | Bm/D | C#7 | Bm7 | E/G# | F#/A# | B7sus4 | B7 | B7sus4
+
+[1:28]  C#7
+        Line: EM7 | B/D# | Bm/D | C#7 | Bm7 | E/G# | F#/A# | B7sus4 | B7 | B7sus4
+
+[1:33]  B7sus4
+        Line: EM7 | B/D# | Bm/D | C#7 | Bm7 | E/G# | F#/A# | B7sus4 | B7 | B7sus4
+
+[1:34]  EM7
+        Line: EM7 | B/D# | B/D# | Bm/D | C#7 | C#(?)m7 | E/G# | F#m7(?) | A/B | B7sus4 | B7 | B7sus4
+
+[1:37]  Bm/D
+        Line: EM7 | B/D# | Bm/D | C#7 | F#m7 | A/B
+
+[1:38]  C#7
+        Line: EM7 | B/D# | Bm/D | C#7 | F#m7 | A/B
+
+[1:40]  Aadd9/B
+        Line: EM7 | B/D# | Bm/D | C#7 | F#m7 | A/B
+
+[1:42]  (TAB section — interlude/transition)
+
+======================================================================
+  SECTION B — Verse 2  (~1:42 - 2:25)
+======================================================================
+
+[1:42]  (TAB fingerpicking pattern, same as intro)
+
+[2:20]  Aadd9/B
+        Line: AM7 | E/G# | F#m7 | A/B | Bm7 | D/E | Bb7(#11)
+
+[2:21]  Bm7
+        Line: AM7 | E/G# | F#m7 | A/B | Bm7 | D/E | Bb7(#11)
+
+[2:24]  AM7
+        Line: AM7 | E/G# | E/G# | C#m7 | F#m7 | #E/G# | A/B(?) | D/E | Bb7(#11)
+
+[2:29]  F#m7
+        Line: AM7 | E/G# | C#m7 | F#m7 | E/G# | A/B
+
+======================================================================
+  SECTION C — Bridge/Chorus  (~2:35 - 3:55)
+======================================================================
+
+[2:37]  Bm/D
+        Line: EM7 | B/D# | Bm/D | C#7 | Bm7 | E/G# | F#/A# | B7sus4 | B7 | B7sus4
+
+[2:38]  C#7
+        Line: EM7 | B/D# | Bm/D | C#7 | Bm7 | E/G# | F#/A# | B7sus4 | B7 | B7sus4
+
+[2:43]  B7sus4
+        Line: EM7 | B/D# | Bm/D | C#7 | Bm7 | E/G# | F#/A# | B7sus4 | B7 | B7sus4
+
+[2:44]  B7sus4  (continued)
+
+[2:47]  Bm/D
+        Line: EM7 | B/D# | Bm/D | C#7 | F#m7 | A/B
+
+[2:49]  C#7
+        Line: EM7 | B/D# | Bm/D | C#7 | F#m7 | A/B
+
+[2:51]  Aadd9/B
+        Line: EM7 | B/D# | Bm/D | C#7 | F#m7 | A/B
+
+[2:52]  EM7
+        Line: EM7 | B/D# | B/D# | Bm/D | C#7 | C#Bm7 | E/G# | F#m7(?) | A/B | B7sus4 | B7 | B7sus4
+
+[2:55]  Bm/D
+        Line: EM7 | B/D# | Bm/D | C#7 | Bm7 | E/G# | F#/A# | B7sus4 | B7 | B7sus4
+
+[2:56]  C#7
+        Line: EM7 | B/D# | Bm/D | C#7 | Bm7 | E/G# | F#/A# | B7sus4 | B7 | B7sus4
+
+[3:02]  B7sus4
+        Line: EM7 | B/D# | Bm/D | C#7 | Bm7 | E/G# | F#/A# | B7sus4 | B7 | B7sus4
+
+[3:03]  EM7
+        Line: EM7 | B/D# | B/D# | Bm/D | C#7 | C#(?)m7 | E/G# | F#m7(?) | A/B | B7sus4 | B7 | B7sus4
+
+[3:05]  Bm/D
+        Line: EM7 | B/D# | Bm/D | C#7 | F#m7 | A/B
+
+[3:07]  C#7
+        Line: EM7 | B/D# | Bm/D | C#7 | F#m7 | A/B
+
+[3:09]  Aadd9/B
+        Line: EM7 | B/D# | Bm/D | C#7 | F#m7 | A/B
+
+[3:11]  A/E
+        Line: A(?)7 | E | B/D# | Bm/Aadd9(?) | E | C#7 | ... | F#m7 | A/B
+
+======================================================================
+  SECTION D — Outro/Final Section  (~3:24 - 5:55)
+======================================================================
+
+[3:24]  Aadd9/B
+        Line: AM7 | E/G# | F#m7 | E | AM7 | E/G# | F#m7 | A/B | E
+
+[3:35]  Aadd9/B  (repeat)
+        Line: AM7 | E/G# | F#m7 | E | AM7 | E/G# | F#m7 | A/B | E
+
+[3:45]  Aadd9/B
+        Line: AM7 | E/G# | F#m7 | E | E/G# | AM7 | E/G# | F#m7 | A/B | E
+
+[3:46]  E
+        Line: AM7 | E/G# | F#m7 | E | E/G# | AM7 | E/G# | F#m7 | A/B | E
+
+[3:55]  Aadd9/B
+        Line: AM7 | E/G# | F#m7 | E | E/G# | AM7 | E/G# | F#m7 | A/B | E
+
+--- Key Change / Modulation section ---
+
+[4:10]  BM7 section
+        Line: BM7 | F#/A# | G#m7 | F#M7 | F#/A# | BM7 | F#/A# | G#m7 | B/C# | F#
+
+[4:42]  Cadd9  (another key change)
+        Line: CM7 | G/B | Am7 | C/D | Dm7 | F/G | C#9(#11)
+
+[4:45]  G/B
+        Line: CM7 | G/B | Am7 | C/D | Dm7 | F/G | C#9(#11)
+
+[4:55]  CM7
+        Line: CM7 | G/B | Am7 | G | G/B | CM7 | G/B | Am7 | C/D | G
+
+[4:55]  CM7
+        Line: CM7 | Bm7 | Bb13 | Am7 | G/B | CM7 | C/D
+
+[5:09]  E7sus4
+        Line: G | Dm/F | E7sus4 | E/G# | Am7 | G/B | A/C# | D7sus4 | D7 | Dsus4
+
+[5:10]  E/G#
+        Line: G | Dm/F | E7sus4 | E/G# | Am7 | G/B | A/C# | D7sus4 | D7 | Dsus4
+
+[5:15]  D7sus4
+        Line: G | Dm/F | E7sus4 | E/G# | Am7 | G/B | A/C# | D7sus4 | D7 | Dsus4
+
+[5:16]  D7sus4  (continued)
+
+[5:20]  E7sus4
+        Line: G | D/F# | Dm/F | E7sus4 | E/G# | Am7 | C/D
+
+[5:28]  E7sus4
+        Line: G | D/F# | Dm/F | E7sus4 | E/G# | Am7 | G/B | A/C# | B/D#
+
+[5:38]  E7sus4
+        Line: Em7 | D/F# | Dm/F | E7sus4 | E/G# | Am7 | C/D
+
+[5:48]  C#m7(b5)
+        Line: G | Em7 | Am7 | C/D | Em7 | C#m7(b5)
+
+[5:50]  Am7  (ending)
+        Line: Am7 | C/D | GM7
+
+======================================================================
+  UNIQUE CHORDS (sorted by first appearance):
+======================================================================
+
+  Key of A (Sections A-D):
+    AM7, E/G#, F#m7, EM7, Aadd9/B, Bm7, D/E, Bb7(#11),
+    C#m7, A/B, Bm/D, C#7, B/D#, E/G#, F#/A#, B7sus4, B7, E, A/E
+
+  Key of B (Modulation):
+    BM7, F#/A#, G#m7, F#M7, B/C#, F#
+
+  Key of C/G (Final modulation):
+    CM7, G/B, Am7, C/D, Dm7, F/G, C#9(#11), G, Bm7, Bb13,
+    Cadd9, E7sus4, E/G#, D7sus4, D7, Dsus4, D/F#, Dm/F,
+    A/C#, B/D#, Em7, C#m7(b5), GM7
+
+======================================================================
+  SONG STRUCTURE SUMMARY
+======================================================================
+
+  [Intro]     TAB fingerpicking pattern
+  [Verse 1]   AM7 → E/G# → F#m7 → A/B → Bm7 → D/E → Bb7(#11)
+              AM7 → E/G# → C#m7 → F#m7 → E/G# → A/B
+  [Chorus 1]  EM7 → B/D# → Bm/D → C#7 → Bm7 → E/G# → F#/A# → B7sus4 → B7 → B7sus4
+              EM7 → B/D# → Bm/D → C#7 → F#m7 → A/B
+  [Interlude] TAB fingerpicking (same as intro)
+  [Verse 2]   (same as Verse 1)
+  [Chorus 2]  (same as Chorus 1, repeated twice)
+  [Bridge]    A/E section
+  [Outro A]   AM7 → E/G# → F#m7 → E (repeated)
+  [Key change → B]  BM7 → F#/A# → G#m7 → F#M7 ...
+  [Key change → C]  CM7 → G/B → Am7 → C/D → Dm7 → F/G → C#9(#11)
+  [Final]     G → Dm/F → E7sus4 → E/G# → Am7 → ... → C#m7(b5)
+  [End]       Am7 → C/D → GM7
+
+======================================================================

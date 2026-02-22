@@ -1,0 +1,107 @@
+{
+  "source": "https://youtu.be/kZ7MBgaso78",
+  "channel": "AW Guitar",
+  "capo": true,
+  "sections": [
+    {
+      "name": "Intro",
+      "time": "0:00",
+      "type": "tab_fingerpicking",
+      "chords": []
+    },
+    {
+      "name": "Verse 1",
+      "time": "1:05",
+      "lines": [
+        ["AM7", "E/G#", "F#m7", "A/B", "Bm7", "D/E", "Bb7(#11)"],
+        ["AM7", "E/G#", "C#m7", "F#m7", "E/G#", "A/B"]
+      ]
+    },
+    {
+      "name": "Chorus 1",
+      "time": "1:26",
+      "lines": [
+        ["EM7", "B/D#", "Bm/D", "C#7", "Bm7", "E/G#", "F#/A#", "B7sus4", "B7", "B7sus4"],
+        ["EM7", "B/D#", "Bm/D", "C#7", "F#m7", "A/B"]
+      ]
+    },
+    {
+      "name": "Interlude",
+      "time": "1:42",
+      "type": "tab_fingerpicking",
+      "chords": []
+    },
+    {
+      "name": "Verse 2",
+      "time": "2:20",
+      "lines": [
+        ["AM7", "E/G#", "F#m7", "A/B", "Bm7", "D/E", "Bb7(#11)"],
+        ["AM7", "E/G#", "C#m7", "F#m7", "E/G#", "A/B"]
+      ]
+    },
+    {
+      "name": "Chorus 2",
+      "time": "2:37",
+      "lines": [
+        ["EM7", "B/D#", "Bm/D", "C#7", "Bm7", "E/G#", "F#/A#", "B7sus4", "B7", "B7sus4"],
+        ["EM7", "B/D#", "Bm/D", "C#7", "F#m7", "A/B"],
+        ["EM7", "B/D#", "Bm/D", "C#7", "Bm7", "E/G#", "F#/A#", "B7sus4", "B7", "B7sus4"],
+        ["EM7", "B/D#", "Bm/D", "C#7", "F#m7", "A/B"]
+      ]
+    },
+    {
+      "name": "Bridge",
+      "time": "3:11",
+      "lines": [
+        ["A/E", "E", "B/D#", "Bm", "E", "C#7", "F#m7", "A/B"]
+      ]
+    },
+    {
+      "name": "Outro (Key of A)",
+      "time": "3:24",
+      "lines": [
+        ["AM7", "E/G#", "F#m7", "E"],
+        ["AM7", "E/G#", "F#m7", "A/B", "E"]
+      ]
+    },
+    {
+      "name": "Key Change to B",
+      "time": "4:10",
+      "lines": [
+        ["BM7", "F#/A#", "G#m7", "F#M7", "F#/A#", "BM7", "F#/A#", "G#m7", "B/C#", "F#"]
+      ]
+    },
+    {
+      "name": "Key Change to C",
+      "time": "4:42",
+      "lines": [
+        ["CM7", "G/B", "Am7", "C/D", "Dm7", "F/G", "C#9(#11)"],
+        ["CM7", "G/B", "Am7", "G", "G/B", "CM7", "G/B", "Am7", "C/D", "G"],
+        ["CM7", "Bm7", "Bb13", "Am7", "G/B", "CM7", "C/D"]
+      ]
+    },
+    {
+      "name": "Final Section",
+      "time": "5:09",
+      "lines": [
+        ["G", "Dm/F", "E7sus4", "E/G#", "Am7", "G/B", "A/C#", "D7sus4", "D7", "Dsus4"],
+        ["G", "D/F#", "Dm/F", "E7sus4", "E/G#", "Am7", "C/D"],
+        ["G", "D/F#", "Dm/F", "E7sus4", "E/G#", "Am7", "G/B", "A/C#", "B/D#"],
+        ["Em7", "D/F#", "Dm/F", "E7sus4", "E/G#", "Am7", "C/D"]
+      ]
+    },
+    {
+      "name": "Ending",
+      "time": "5:48",
+      "lines": [
+        ["G", "Em7", "Am7", "C/D", "Em7", "C#m7(b5)"],
+        ["Am7", "C/D", "GM7"]
+      ]
+    }
+  ],
+  "unique_chords": {
+    "key_of_A": ["AM7", "E/G#", "F#m7", "EM7", "Aadd9/B", "Bm7", "D/E", "Bb7(#11)", "C#m7", "A/B", "Bm/D", "C#7", "B/D#", "F#/A#", "B7sus4", "B7", "E", "A/E"],
+    "key_of_B": ["BM7", "F#/A#", "G#m7", "F#M7", "B/C#", "F#"],
+    "key_of_C_G": ["CM7", "G/B", "Am7", "C/D", "Dm7", "F/G", "C#9(#11)", "G", "Bb13", "Cadd9", "E7sus4", "D7sus4", "D7", "Dsus4", "D/F#", "Dm/F", "A/C#", "B/D#", "Em7", "C#m7(b5)", "GM7"]
+  }
+}

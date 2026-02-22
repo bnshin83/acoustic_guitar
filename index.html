@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guitar Chord Viewer — AW Guitar</title>
+<style>
+/* ============================================================
+   CSS RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-dark: #0f1729;
+  --bg-panel: #1a2340;
+  --bg-card: #232e4a;
+  --bg-hover: #2d3a5c;
+  --text-primary: #e8ecf4;
+  --text-secondary: #8b95b0;
+  --text-muted: #5a6580;
+  --accent-blue: #4a9eff;
+  --accent-gold: #f0c040;
+  --fretboard-wood: #5c3a1e;
+  --fretboard-dark: #3a2210;
+  --string-color: #c0b090;
+  --nut-color: #f5f0e0;
+  --fret-wire: #a89878;
+  --dot-index: #4a9eff;
+  --dot-middle: #4acc7a;
+  --dot-ring: #ff6b6b;
+  --dot-pinky: #ff9f43;
+  --dot-default: #e8ecf4;
+  --border: #2d3a5c;
+  --active-chord: #4a9eff;
+  --section-verse: #4a9eff;
+  --section-chorus: #f0c040;
+  --section-bridge: #4acc7a;
+  --section-tab: #c084fc;
+  --section-key: #ff6b6b;
+  --section-ending: #ff9f43;
+}
+
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.header {
+  background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.header-left h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.header-left .subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+.header-left .subtitle a {
+  color: var(--accent-blue);
+  text-decoration: none;
+}
+.header-left .subtitle a:hover { text-decoration: underline; }
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.capo-badge {
+  background: var(--accent-gold);
+  color: #1a1a1a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.nav-help {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.nav-help kbd {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: inherit;
+  font-size: 0.7rem;
+}
+
+/* ============================================================
+   MAIN LAYOUT — 3-column grid
+   ============================================================ */
+.main-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 260px;
+  height: calc(100vh - 72px);
+  overflow: hidden;
+}
+
+/* ============================================================
+   LEFT PANEL — Song Structure
+   ============================================================ */
+.panel-left {
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 0;
+}
+.panel-left::-webkit-scrollbar { width: 6px; }
+.panel-left::-webkit-scrollbar-track { background: transparent; }
+.panel-left::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.panel-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  padding: 1rem 1rem 0.5rem;
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel);
+  z-index: 2;
+}
+
+.section-block {
+  margin-bottom: 2px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+  border-left: 3px solid transparent;
+}
+.section-header:hover {
+  background: var(--bg-hover);
+}
+.section-header.active {
+  background: rgba(74, 158, 255, 0.08);
+  border-left-color: var(--active-chord);
+}
+.section-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.section-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex: 1;
+}
+.section-time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.section-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.section-header.expanded .section-chevron {
+  transform: rotate(90deg);
+}
+
+.section-content {
+  display: none;
+  padding: 0.25rem 1rem 0.5rem 1.75rem;
+}
+.section-content.show { display: block; }
+
+.chord-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.chord-line .arrow {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  align-self: center;
+}
+.chord-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  white-space: nowrap;
+}
+.chord-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-blue);
+}
+.chord-btn.active {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: #fff;
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(192, 132, 252, 0.15);
+  color: var(--section-tab);
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+/* ============================================================
+   CENTER PANEL — Fretboard + TAB
+   ============================================================ */
+.panel-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+  gap: 1.5rem;
+}
+.panel-center::-webkit-scrollbar { width: 6px; }
+.panel-center::-webkit-scrollbar-track { background: transparent; }
+.panel-center::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.chord-display-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  min-height: 2.5rem;
+  transition: opacity 0.2s;
+}
+.chord-display-name .key-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  display: block;
+  margin-top: 2px;
+}
+
+.fretboard-container {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+}
+
+#fretboard-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.no-chord-message {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+/* TAB viewer */
+.tab-viewer {
+  display: none;
+  width: 100%;
+  max-width: 640px;
+}
+.tab-viewer.show { display: block; }
+.tab-viewer-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+.tab-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--accent-gold);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Finger legend */
+.finger-legend {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+.legend-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+/* ============================================================
+   RIGHT PANEL — Chord Library
+   ============================================================ */
+.panel-right {
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 0;
+}
+.panel-right::-webkit-scrollbar { width: 6px; }
+.panel-right::-webkit-scrollbar-track { background: transparent; }
+.panel-right::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.library-group {
+  margin-bottom: 0.5rem;
+}
+.library-group-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  padding: 1rem 1rem 0.5rem;
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel);
+  z-index: 2;
+}
+.library-chords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 0.75rem 0.5rem;
+}
+.library-chord-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+.library-chord-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-blue);
+}
+.library-chord-btn.active {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: #fff;
+}
+
+/* ============================================================
+   MOBILE — Responsive
+   ============================================================ */
+.mobile-tabs {
+  display: none;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+.mobile-tabs button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.75rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.mobile-tabs button.active {
+  color: var(--accent-blue);
+  border-bottom-color: var(--accent-blue);
+}
+
+@media (max-width: 900px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+  .mobile-tabs {
+    display: flex;
+  }
+  .panel-left, .panel-right {
+    display: none;
+  }
+  .panel-left.mobile-active,
+  .panel-center.mobile-active,
+  .panel-right.mobile-active {
+    display: flex !important;
+  }
+  .panel-left.mobile-active {
+    display: block !important;
+  }
+  .panel-right.mobile-active {
+    display: block !important;
+  }
+  .panel-center {
+    display: none;
+  }
+  .main-layout {
+    height: calc(100vh - 72px - 44px);
+  }
+  .header { padding: 0.75rem 1rem; }
+  .header-left h1 { font-size: 1rem; }
+  .nav-help { display: none; }
+}
+
+@media (max-width: 600px) {
+  html { font-size: 13px; }
+  .fretboard-container { max-width: 300px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <h1>Jazz Guitar Chord Viewer</h1>
+    <div class="subtitle">
+      Arrangement by <a href="https://youtu.be/kZ7MBgaso78" target="_blank" rel="noopener">AW Guitar</a>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="capo-badge">Capo</span>
+    <div class="nav-help">
+      <kbd>&larr;</kbd> <kbd>&rarr;</kbd> prev / next chord
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE TABS -->
+<div class="mobile-tabs">
+  <button class="active" data-panel="center">Fretboard</button>
+  <button data-panel="left">Song</button>
+  <button data-panel="right">Chords</button>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+  <!-- LEFT: Song Structure -->
+  <div class="panel-left mobile-active" id="panelLeft"></div>
+
+  <!-- CENTER: Fretboard -->
+  <div class="panel-center mobile-active" id="panelCenter">
+    <div class="chord-display-name" id="chordDisplayName">
+      Select a chord
+      <span class="key-label" id="keyLabel"></span>
+    </div>
+
+    <div class="fretboard-container">
+      <svg id="fretboard-svg" viewBox="0 0 280 340" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <div class="finger-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--dot-index)"></div> Index (1)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--dot-middle)"></div> Middle (2)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--dot-ring)"></div> Ring (3)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--dot-pinky)"></div> Pinky (4)</div>
+    </div>
+
+    <div class="tab-viewer" id="tabViewer">
+      <div class="tab-viewer-title">Fingerpicking Pattern (TAB)</div>
+      <div class="tab-content" id="tabContent"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Chord Library -->
+  <div class="panel-right" id="panelRight"></div>
+</div>
+
+<script src="chord_data.js"></script>
+<script>
+// =============================================================================
+// APP STATE
+// =============================================================================
+const state = {
+  activeChord: null,
+  activeSection: null,
+  allChordButtons: [],  // flat list for keyboard nav
+  currentChordIndex: -1
+};
+
+// =============================================================================
+// SVG FRETBOARD RENDERER
+// =============================================================================
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function createSvgEl(tag, attrs) {
+  const el = document.createElementNS(SVG_NS, tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+function renderFretboard(chordName) {
+  const svg = document.getElementById('fretboard-svg');
+  svg.innerHTML = '';
+
+  const voicing = CHORD_VOICINGS[chordName];
+  if (!voicing) {
+    // show placeholder
+    const t = createSvgEl('text', {
+      x: '140', y: '170', fill: '#5a6580',
+      'font-size': '14', 'text-anchor': 'middle', 'font-family': 'inherit'
+    });
+    t.textContent = 'No voicing data';
+    svg.appendChild(t);
+    return;
+  }
+
+  const { strings, fingers, startFret, barres } = voicing;
+  const numFrets = 5;
+  const leftPad = 50;
+  const topPad = 50;
+  const stringSpacing = 36;
+  const fretSpacing = 52;
+  const totalW = stringSpacing * 5;
+  const totalH = fretSpacing * numFrets;
+  const dotRadius = 13;
+
+  // Fretboard background
+  const bgRect = createSvgEl('rect', {
+    x: leftPad - 4, y: topPad - 2,
+    width: totalW + 8, height: totalH + 4,
+    rx: 3, fill: '#3a2210'
+  });
+  svg.appendChild(bgRect);
+
+  // Rosewood grain (subtle)
+  for (let i = 0; i < 8; i++) {
+    const line = createSvgEl('line', {
+      x1: leftPad + Math.random() * totalW,
+      y1: topPad,
+      x2: leftPad + Math.random() * totalW,
+      y2: topPad + totalH,
+      stroke: 'rgba(90,60,30,0.3)', 'stroke-width': '1'
+    });
+    svg.appendChild(line);
+  }
+
+  // Nut or fret position label
+  if (startFret <= 1) {
+    const nut = createSvgEl('rect', {
+      x: leftPad - 4, y: topPad - 5,
+      width: totalW + 8, height: 7,
+      rx: 2, fill: '#f5f0e0'
+    });
+    svg.appendChild(nut);
+  } else {
+    const label = createSvgEl('text', {
+      x: leftPad - 16, y: topPad + fretSpacing / 2 + 5,
+      fill: '#8b95b0', 'font-size': '13', 'text-anchor': 'middle',
+      'font-weight': '600', 'font-family': 'inherit'
+    });
+    label.textContent = startFret + 'fr';
+    svg.appendChild(label);
+  }
+
+  // Fret wires
+  for (let f = 0; f <= numFrets; f++) {
+    const y = topPad + f * fretSpacing;
+    const fw = f === 0 ? 2 : 1.5;
+    const line = createSvgEl('line', {
+      x1: leftPad, y1: y, x2: leftPad + totalW, y2: y,
+      stroke: '#a89878', 'stroke-width': fw
+    });
+    svg.appendChild(line);
+  }
+
+  // Strings
+  for (let s = 0; s < 6; s++) {
+    const x = leftPad + s * stringSpacing;
+    const sw = 1.2 + (5 - s) * 0.25; // thicker bass strings
+    const line = createSvgEl('line', {
+      x1: x, y1: topPad, x2: x, y2: topPad + totalH,
+      stroke: '#c0b090', 'stroke-width': sw
+    });
+    svg.appendChild(line);
+  }
+
+  // Fret dots (inlays) at frets 3, 5 relative to startFret
+  const inlayFrets = [3, 5, 7, 9, 12, 15];
+  for (const absFret of inlayFrets) {
+    const relFret = absFret - (startFret <= 1 ? 0 : startFret - 1);
+    if (relFret >= 1 && relFret <= numFrets) {
+      const cy = topPad + (relFret - 0.5) * fretSpacing;
+      if (absFret === 12) {
+        // double dot
+        for (const offset of [-stringSpacing, stringSpacing]) {
+          const dot = createSvgEl('circle', {
+            cx: leftPad + 2.5 * stringSpacing + offset, cy,
+            r: 4, fill: 'rgba(200,180,140,0.2)'
+          });
+          svg.appendChild(dot);
+        }
+      } else {
+        const dot = createSvgEl('circle', {
+          cx: leftPad + 2.5 * stringSpacing, cy,
+          r: 4, fill: 'rgba(200,180,140,0.2)'
+        });
+        svg.appendChild(dot);
+      }
+    }
+  }
+
+  // Barres
+  for (const barre of barres) {
+    const fromIdx = 6 - barre.fromString; // highE=1 → index 5
+    const toIdx = 6 - barre.toString;     // lowE=6 → index 0
+    const minIdx = Math.min(fromIdx, toIdx);
+    const maxIdx = Math.max(fromIdx, toIdx);
+    const fretRel = barre.fret - (startFret <= 1 ? 0 : startFret - 1);
+    if (fretRel >= 1 && fretRel <= numFrets) {
+      const cy = topPad + (fretRel - 0.5) * fretSpacing;
+      const x1 = leftPad + minIdx * stringSpacing;
+      const x2 = leftPad + maxIdx * stringSpacing;
+      const barreEl = createSvgEl('rect', {
+        x: x1 - dotRadius, y: cy - dotRadius * 0.6,
+        width: (x2 - x1) + dotRadius * 2, height: dotRadius * 1.2,
+        rx: dotRadius * 0.6, fill: 'var(--dot-index)', opacity: '0.7'
+      });
+      svg.appendChild(barreEl);
+    }
+  }
+
+  // Finger dots + muted/open markers
+  const fingerColors = {
+    0: 'var(--dot-default)',
+    1: 'var(--dot-index)',
+    2: 'var(--dot-middle)',
+    3: 'var(--dot-ring)',
+    4: 'var(--dot-pinky)'
+  };
+
+  for (let s = 0; s < 6; s++) {
+    const fretVal = strings[s];
+    const finger = fingers[s];
+    const x = leftPad + s * stringSpacing;
+
+    if (fretVal === -1) {
+      // Muted string — X above
+      const txt = createSvgEl('text', {
+        x, y: topPad - 16,
+        fill: 'var(--text-muted)', 'font-size': '14',
+        'text-anchor': 'middle', 'font-weight': '600', 'font-family': 'inherit'
+      });
+      txt.textContent = '\u00D7';
+      svg.appendChild(txt);
+    } else if (fretVal === 0) {
+      // Open string — O above
+      const circ = createSvgEl('circle', {
+        cx: x, cy: topPad - 18,
+        r: 7, fill: 'none', stroke: 'var(--text-secondary)', 'stroke-width': '1.5'
+      });
+      svg.appendChild(circ);
+    } else {
+      // Fretted note — dot on fretboard
+      const fretRel = fretVal - (startFret <= 1 ? 0 : startFret - 1);
+      if (fretRel >= 1 && fretRel <= numFrets) {
+        const cy = topPad + (fretRel - 0.5) * fretSpacing;
+        const color = fingerColors[finger] || fingerColors[0];
+
+        // shadow
+        const shadow = createSvgEl('circle', {
+          cx: x, cy: cy + 2, r: dotRadius,
+          fill: 'rgba(0,0,0,0.3)'
+        });
+        svg.appendChild(shadow);
+
+        // dot
+        const dot = createSvgEl('circle', {
+          cx: x, cy, r: dotRadius,
+          fill: color, class: 'finger-dot'
+        });
+        svg.appendChild(dot);
+
+        // finger number
+        if (finger > 0) {
+          const txt = createSvgEl('text', {
+            x, y: cy + 5,
+            fill: '#fff', 'font-size': '12',
+            'text-anchor': 'middle', 'font-weight': '700',
+            'font-family': 'inherit'
+          });
+          txt.textContent = finger;
+          svg.appendChild(txt);
+        }
+      }
+    }
+  }
+
+  // String labels at bottom
+  const stringNames = ['E', 'A', 'D', 'G', 'B', 'e'];
+  for (let s = 0; s < 6; s++) {
+    const x = leftPad + s * stringSpacing;
+    const label = createSvgEl('text', {
+      x, y: topPad + totalH + 22,
+      fill: 'var(--text-muted)', 'font-size': '11',
+      'text-anchor': 'middle', 'font-family': 'inherit'
+    });
+    label.textContent = stringNames[s];
+    svg.appendChild(label);
+  }
+}
+
+// =============================================================================
+// UI BUILDERS
+// =============================================================================
+
+function getSectionColor(section) {
+  const name = section.name.toLowerCase();
+  if (section.type === 'tab') return 'var(--section-tab)';
+  if (name.includes('verse')) return 'var(--section-verse)';
+  if (name.includes('chorus')) return 'var(--section-chorus)';
+  if (name.includes('bridge')) return 'var(--section-bridge)';
+  if (name.includes('key change') || name.includes('final')) return 'var(--section-key)';
+  if (name.includes('ending') || name.includes('outro')) return 'var(--section-ending)';
+  return 'var(--text-secondary)';
+}
+
+function buildSongStructure() {
+  const panel = document.getElementById('panelLeft');
+  panel.innerHTML = '<div class="panel-title">Song Structure</div>';
+
+  SONG_DATA.sections.forEach((section, sIdx) => {
+    const block = document.createElement('div');
+    block.className = 'section-block';
+
+    const color = getSectionColor(section);
+
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.innerHTML = `
+      <div class="section-dot" style="background:${color}"></div>
+      <span class="section-name">${section.name}</span>
+      <span class="section-time">${section.time}</span>
+      <svg class="section-chevron" viewBox="0 0 16 16" fill="none">
+        <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    `;
+
+    const content = document.createElement('div');
+    content.className = 'section-content';
+
+    if (section.type === 'tab') {
+      content.innerHTML = '<div class="tab-badge">&#9835; Fingerpicking TAB</div>';
+    } else {
+      section.lines.forEach(line => {
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'chord-line';
+        line.forEach((chord, cIdx) => {
+          const btn = document.createElement('button');
+          btn.className = 'chord-btn';
+          btn.textContent = chord;
+          btn.dataset.chord = chord;
+          btn.dataset.section = sIdx;
+          btn.addEventListener('click', () => selectChord(chord, btn, section));
+          lineDiv.appendChild(btn);
+          state.allChordButtons.push(btn);
+
+          if (cIdx < line.length - 1) {
+            const arrow = document.createElement('span');
+            arrow.className = 'arrow';
+            arrow.textContent = '\u2192';
+            lineDiv.appendChild(arrow);
+          }
+        });
+        content.appendChild(lineDiv);
+      });
+    }
+
+    header.addEventListener('click', () => {
+      const isExpanded = header.classList.contains('expanded');
+      if (isExpanded) {
+        header.classList.remove('expanded');
+        content.classList.remove('show');
+      } else {
+        header.classList.add('expanded');
+        content.classList.add('show');
+      }
+
+      // Show/hide TAB viewer for tab sections
+      if (section.type === 'tab') {
+        setActiveSection(section);
+      }
+    });
+
+    block.appendChild(header);
+    block.appendChild(content);
+    panel.appendChild(block);
+  });
+}
+
+function buildChordLibrary() {
+  const panel = document.getElementById('panelRight');
+  panel.innerHTML = '';
+
+  for (const [groupName, chords] of Object.entries(CHORD_LIBRARY)) {
+    const group = document.createElement('div');
+    group.className = 'library-group';
+
+    const title = document.createElement('div');
+    title.className = 'library-group-title';
+    title.textContent = groupName;
+    group.appendChild(title);
+
+    const container = document.createElement('div');
+    container.className = 'library-chords';
+
+    chords.forEach(chord => {
+      const btn = document.createElement('button');
+      btn.className = 'library-chord-btn';
+      btn.textContent = chord;
+      btn.dataset.chord = chord;
+      btn.addEventListener('click', () => selectChordFromLibrary(chord));
+      container.appendChild(btn);
+    });
+
+    group.appendChild(container);
+    panel.appendChild(group);
+  }
+}
+
+// =============================================================================
+// INTERACTIONS
+// =============================================================================
+
+function selectChord(chordName, btn, section) {
+  state.activeChord = chordName;
+
+  // Find index for keyboard nav
+  const idx = state.allChordButtons.indexOf(btn);
+  if (idx !== -1) state.currentChordIndex = idx;
+
+  // Update fretboard
+  renderFretboard(chordName);
+
+  // Update chord name display
+  const displayEl = document.getElementById('chordDisplayName');
+  const keyLabel = document.getElementById('keyLabel');
+  displayEl.childNodes[0].textContent = chordName + ' ';
+  if (section && section.key) {
+    keyLabel.textContent = 'Key of ' + section.key;
+  } else {
+    keyLabel.textContent = '';
+  }
+
+  // Highlight active chord buttons in song structure
+  document.querySelectorAll('.chord-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  // Highlight in library
+  document.querySelectorAll('.library-chord-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.chord === chordName);
+  });
+
+  // Show/hide TAB
+  const tabViewer = document.getElementById('tabViewer');
+  if (section && section.type === 'tab') {
+    tabViewer.classList.add('show');
+    document.getElementById('tabContent').textContent = TAB_DATA;
+  } else {
+    tabViewer.classList.remove('show');
+  }
+}
+
+function selectChordFromLibrary(chordName) {
+  state.activeChord = chordName;
+
+  // Render fretboard
+  renderFretboard(chordName);
+
+  // Update display
+  const displayEl = document.getElementById('chordDisplayName');
+  const keyLabel = document.getElementById('keyLabel');
+  displayEl.childNodes[0].textContent = chordName + ' ';
+
+  // Find which key group
+  const voicing = CHORD_VOICINGS[chordName];
+  if (voicing) {
+    const catMap = { key_of_A: 'A', key_of_B: 'B', key_of_C_G: 'C/G' };
+    keyLabel.textContent = 'Key of ' + (catMap[voicing.category] || '');
+  } else {
+    keyLabel.textContent = '';
+  }
+
+  // Highlight in library
+  document.querySelectorAll('.library-chord-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.chord === chordName);
+  });
+
+  // Find and highlight first occurrence in song structure, expand section
+  const firstBtn = document.querySelector(`.chord-btn[data-chord="${CSS.escape(chordName)}"]`);
+  if (firstBtn) {
+    document.querySelectorAll('.chord-btn').forEach(b => b.classList.remove('active'));
+    firstBtn.classList.add('active');
+
+    // Expand parent section
+    const sectionContent = firstBtn.closest('.section-content');
+    const sectionHeader = sectionContent?.previousElementSibling;
+    if (sectionContent && !sectionContent.classList.contains('show')) {
+      sectionContent.classList.add('show');
+      sectionHeader?.classList.add('expanded');
+    }
+
+    // Scroll into view
+    firstBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Update nav index
+    const idx = state.allChordButtons.indexOf(firstBtn);
+    if (idx !== -1) state.currentChordIndex = idx;
+  }
+
+  // Hide TAB
+  document.getElementById('tabViewer').classList.remove('show');
+}
+
+function setActiveSection(section) {
+  const tabViewer = document.getElementById('tabViewer');
+  if (section.type === 'tab') {
+    tabViewer.classList.add('show');
+    document.getElementById('tabContent').textContent = TAB_DATA;
+  } else {
+    tabViewer.classList.remove('show');
+  }
+}
+
+// =============================================================================
+// KEYBOARD NAVIGATION
+// =============================================================================
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    navigateChord(1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    navigateChord(-1);
+  }
+});
+
+function navigateChord(direction) {
+  if (state.allChordButtons.length === 0) return;
+
+  let newIndex = state.currentChordIndex + direction;
+  if (newIndex < 0) newIndex = state.allChordButtons.length - 1;
+  if (newIndex >= state.allChordButtons.length) newIndex = 0;
+
+  const btn = state.allChordButtons[newIndex];
+  const chord = btn.dataset.chord;
+  const sectionIdx = parseInt(btn.dataset.section);
+  const section = SONG_DATA.sections[sectionIdx];
+
+  // Expand section if needed
+  const sectionContent = btn.closest('.section-content');
+  const sectionHeader = sectionContent?.previousElementSibling;
+  if (sectionContent && !sectionContent.classList.contains('show')) {
+    sectionContent.classList.add('show');
+    sectionHeader?.classList.add('expanded');
+  }
+
+  selectChord(chord, btn, section);
+  btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// =============================================================================
+// MOBILE TAB SWITCHING
+// =============================================================================
+document.querySelectorAll('.mobile-tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const panel = btn.dataset.panel;
+    document.querySelectorAll('.mobile-tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.getElementById('panelLeft').classList.toggle('mobile-active', panel === 'left');
+    document.getElementById('panelCenter').classList.toggle('mobile-active', panel === 'center');
+    document.getElementById('panelRight').classList.toggle('mobile-active', panel === 'right');
+  });
+});
+
+// =============================================================================
+// INIT
+// =============================================================================
+function init() {
+  buildSongStructure();
+  buildChordLibrary();
+
+  // Render empty fretboard
+  renderFretboard(null);
+
+  // Auto-expand first section with chords (Verse 1)
+  const firstSection = document.querySelector('.section-block:nth-child(3)'); // skip title + intro
+  if (firstSection) {
+    const header = firstSection.querySelector('.section-header');
+    const content = firstSection.querySelector('.section-content');
+    header?.classList.add('expanded');
+    content?.classList.add('show');
+  }
+
+  // Select first chord
+  if (state.allChordButtons.length > 0) {
+    const firstBtn = state.allChordButtons[0];
+    const chord = firstBtn.dataset.chord;
+    const sIdx = parseInt(firstBtn.dataset.section);
+    selectChord(chord, firstBtn, SONG_DATA.sections[sIdx]);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
